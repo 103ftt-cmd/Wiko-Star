@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ويكو ستار | Wiko Star</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: black; color: white; margin: 0; overflow: hidden; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const Icon = ({ name, size = 28, ...props }) => {
+            useEffect(() => { if(window.lucide) lucide.createIcons(); }, []);
+            return <i data-lucide={name} style={{ width: size, height: size }} {...props}></i>;
+        };
+
+        function App() {
+            const [loading, setLoading] = useState(true);
+            const [activeTab, setActiveTab] = useState('home');
+            useEffect(() => { setTimeout(() => setLoading(false), 2000); }, []);
+
+            if (loading) return (
+                <div className="h-screen bg-black flex flex-col items-center justify-center">
+                    <div className="w-24 h-24 border-4 border-yellow-500 rounded-[30px] flex items-center justify-center animate-pulse">
+                        <Icon name="camera" size={48} className="text-yellow-500" />
+                    </div>
+                    <h1 className="mt-6 text-yellow-500 font-black text-xl">ويكو ستار</h1>
+                </div>
+            );
+
+            return (
+                <div className="h-screen flex flex-col max-w-md mx-auto border-x border-white/10 relative">
+                    <main className="flex-1 overflow-y-auto scrollbar-hide">
+                        {activeTab === 'home' && (
+                            <div className="h-full snap-y snap-mandatory overflow-y-auto">
+                                <div className="h-full snap-start relative bg-zinc-900 border-b border-white/5">
+                                    <img src="https://picsum.photos/seed/1/1080/1920" className="w-full h-full object-cover opacity-60" />
+                                    <div className="absolute bottom-28 right-4 flex flex-col gap-6 items-center">
+                                        <Icon name="heart" className="text-white" size={35} />
+                                        <Icon name="message-circle" className="text-white" size={35} />
+                                        <div className="bg-yellow-500 p-1 rounded-full text-black"><Icon name="plus" size={25} /></div>
+                                    </div>
+                                    <div className="absolute bottom-28 left-4 text-right px-4">
+                                        <h3 className="font-bold text-yellow-500 text-lg">@أحمد_يامي</h3>
+                                        <p className="text-sm">أفضل لحظات اليوم! ✨ #ويكو_ستار</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {activeTab === 'profile' && (
+                            <div className="p-8 text-center animate-in fade-in duration-500">
+                                <div className="w-32 h-32 rounded-[40px] border-4 border-yellow-500 mx-auto overflow-hidden mb-4 shadow-lg shadow-yellow-500/20">
+                                    <img src="https://picsum.photos/seed/me/200" className="w-full h-full object-cover" />
+                                </div>
+                                <h2 className="text-2xl font-black text-white">أحمد يامي</h2>
+                                <p className="text-yellow-500">@aamr1003</p>
+                                <div className="flex justify-center gap-10 mt-6 py-4 border-y border-white/10">
+                                    <div><div className="font-black text-xl">45.2K</div><div className="text-xs text-zinc-500 font-bold">متابع</div></div>
+                                    <div><div className="font-black text-xl">1.2M</div><div className="text-xs text-zinc-500 font-bold">إعجاب</div></div>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+                    <nav className="h-20 bg-black/90 backdrop-blur-md border-t border-white/10 flex justify-around items-center px-4">
+                        <button onClick={() => setActiveTab('home')} className={activeTab === 'home' ? 'text-yellow-500' : 'text-zinc-500'}><Icon name="home" /></button>
+                        <button className="text-zinc-500"><Icon name="search" /></button>
+                        <div className="bg-yellow-500 text-black p-3 rounded-2xl -mt-10 border-4 border-black shadow-lg shadow-yellow-500/30"><Icon name="plus" /></div>
+                        <button className="text-zinc-500"><Icon name="bell" /></button>
+                        <button onClick={() => setActiveTab('profile')} className={activeTab === 'profile' ? 'text-yellow-500' : 'text-zinc-500'}><Icon name="user" /></button>
+                    </nav>
+                </div>
+            );
+        }
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
