@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wiko Star - Official</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/framer-motion@11/dist/framer-motion.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #000; color: white; margin: 0; overflow: hidden; }
+        .active-tab { color: #FFCC00; }
+        .inactive-tab { color: #666; }
+        .glass-effect { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .video-container { height: 100dvh; position: relative; background: #000; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { motion, AnimatePresence } = window.FramerMotion;
+
+        const Icon = ({ name, size = 24, className = "" }) => {
+            useEffect(() => { lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
+        };
+
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [showSettings, setShowSettings] = useState(false);
+
+            const renderPage = () => {
+                switch(currentPage) {
+                    case 'home': return <HomeView />;
+                    case 'radar': return <RadarView />;
+                    case 'chat': return <ChatView />;
+                    case 'profile': return <ProfileView onOpenSettings={() => setShowSettings(true)} />;
+                    default: return <HomeView />;
+                }
+            };
+
+            return (
+                <div className="flex flex-col h-[100dvh] w-full max-w-md mx-auto relative overflow-hidden bg-black">
+                    {/* Header */}
+                    <header className="absolute top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-transparent">
+                        <div className="bg-[#FFCC00] p-2 rounded-xl text-black shadow-lg shadow-[#FFCC00]/20">
+                            <Icon name="camera" size={20} />
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <h1 className="text-white font-black italic text-lg leading-tight">STAR WIKO</h1>
+                            <p className="text-[#FFCC00] text-[8px] tracking-[0.2em] font-bold">OFFICIAL APP</p>
+                        </div>
+                        <div className="flex gap-3">
+                            <Icon name="bell" className="text-white" />
+                            <Icon name="search" className="text-white" />
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="flex-1 relative overflow-hidden">
+                        {renderPage()}
+                    </main>
+
+                    {/* Bottom Navigation - 5 Icons */}
+                    <nav className="h-20 bg-black/95 border-t border-white/10 flex justify-around items-center px-2 z-50">
+                        <NavButton icon="home" label="الرئيسية" active={currentPage === 'home'} onClick={() => setCurrentPage('home')} />
+                        <NavButton icon="message-square" label="دردشة" active={currentPage === 'chat'} onClick={() => setCurrentPage('chat')} />
+                        
+                        <div className="relative -top-4">
+                            <div className="bg-[#FFCC00] p-4 rounded-2xl shadow-xl shadow-[#FFCC00]/30 text-black">
+                                <Icon name="plus" size={30} />
+                            </div>
+                        </div>
+
+                        <NavButton icon="star" label="رادار" active={currentPage === 'radar'} onClick={() => setCurrentPage('radar')} />
+                        <NavButton icon="user" label="ملفي" active={currentPage === 'profile'} onClick={() => setCurrentPage('profile')} />
+                    </nav>
+
+                    {/* Settings Modal */}
+                    <AnimatePresence>
+                        {showSettings && <SettingsView onClose={() => setShowSettings(false)} />}
+                    </AnimatePresence>
+                </div>
+            );
+        };
+
+        const NavButton = ({ icon, label, active, onClick }) => (
+            <button onClick={onClick} className={`flex flex-col items-center gap-1 ${active ? 'active-tab' : 'inactive-tab'}`}>
+                <Icon name={icon} size={24} />
+                <span className="text-[10px] font-bold">{label}</span>
+            </button>
+        );
+
+        const HomeView = () => (
+            <div className="video-container flex items-center justify-center">
+                <img src="https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&q=80&w=1080&h=1920" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
+                
+                {/* Side Icons - 5 Items */}
+                <div className="absolute right-4 bottom-24 flex flex-col items-center gap-6">
+                    <div className="relative">
+                        <div className="w-12 h-12 rounded-full border-2 border-white overflow-hidden">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed" />
+                        </div>
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-[#FF3B30] rounded-full p-0.5"><Icon name="plus" size={12} /></div>
+                    </div>
+                    <div className="flex flex-col items-center"><Icon name="heart" size={32} /><span className="text-xs font-bold mt-1">2.5M</span></div>
+                    <div className="flex flex-col items-center"><Icon name="message-circle" size={32} /><span className="text-xs font-bold mt-1">45K</span></div>
+                    <div className="flex flex-col items-center"><Icon name="share-2" size={32} /><span className="text-xs font-bold mt-1">مشاركة</span></div>
+                    <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border-2 border-zinc-600 animate-spin-slow"><Icon name="music" size={18} /></div>
+                </div>
+
+                {/* Content Info */}
+                <div className="absolute bottom-24 left-4 right-20 text-white">
+                    <div className="flex items-center gap-2 mb-2 font-bold text-lg">
+                        <span>@القرآن الكريم</span>
+                        <Icon name="check-circle" size={16} className="text-blue-400" />
+                    </div>
+                    <p className="text-sm mb-4 line-clamp-2">تلاوة خاشعة من سورة البقرة بصوت الشيخ ماهر المعيقلي ❤️📖 #قرآن #اسلام #راحة_نفسية</p>
+                    <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md p-2 rounded-full w-fit">
+                        <Icon name="music" size={14} />
+                        <span className="text-xs font-bold">تلاوة خاشعة - سورة البقرة</span>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const ProfileView = ({ onOpenSettings }) => (
+            <div className="p-6 pt-20 h-full overflow-y-auto no-scrollbar">
+                <div className="flex justify-between items-center mb-8">
+                    <div className="bg-zinc-900/50 p-2 rounded-xl"><Icon name="qr-code" size={24} /></div>
+                    <h2 className="font-black text-xl">الملف الشخصي</h2>
+                    <button onClick={onOpenSettings} className="bg-zinc-900/50 p-2 rounded-xl"><Icon name="settings" size={24} /></button>
+                </div>
+                
+                <div className="flex flex-col items-center mb-10">
+                    <div className="w-28 h-28 rounded-full border-4 border-[#FFCC00] p-1.5 relative mb-4">
+                        <div className="w-full h-full bg-zinc-800 rounded-full flex items-center justify-center text-3xl font-black">AS</div>
+                        <div className="absolute bottom-0 right-0 bg-[#FFCC00] p-1.5 rounded-full text-black border-4 border-black">
+                            <Icon name="edit-3" size={16} />
+                        </div>
+                    </div>
+                    <span className="font-black text-xl mb-1">احمد يامي</span>
+                    <span className="text-zinc-500 font-bold">@khfdjkkj</span>
+                </div>
+
+                <div className="flex justify-around mb-8 bg-zinc-900/30 py-6 rounded-3xl">
+                    <Stat num="128" label="متابعة" />
+                    <Stat num="45.2K" label="متابعون" />
+                    <Stat num="1.2M" label="تسجيلات الإعجاب" />
+                </div>
+
+                <div className="flex gap-3 mb-8">
+                    <button className="flex-1 bg-[#FFCC00] text-black font-black py-4 rounded-2xl">تعديل الملف الشخصي</button>
+                    <button className="bg-zinc-900 p-4 rounded-2xl"><Icon name="share-2" /></button>
+                </div>
+            </div>
+        );
+
+        const SettingsView = ({ onClose }) => (
+            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} className="fixed inset-0 z-[100] bg-black p-6 pt-14">
+                <div className="flex items-center justify-between mb-10">
+                    <button onClick={onClose} className="bg-zinc-900 p-2 rounded-xl"><Icon name="chevron-left" /></button>
+                    <h2 className="font-black text-xl">الإعدادات</h2>
+                    <div className="w-10"></div>
+                </div>
+
+                <div className="space-y-6 overflow-y-auto h-[calc(100%-100px)] no-scrollbar">
+                    <Section title="حسابي">
+                        <SettingItem icon="user" label="الاسم" value="احمد يامي" />
+                        <SettingItem icon="at-sign" label="اسم المستخدم" value="aamr1003" />
+                        <SettingItem icon="calendar" label="تاريخ الميلاد" value="1999/8/9" />
+                        <SettingItem icon="phone" label="رقم الهاتف" value="050 47*****" />
+                    </Section>
+
+                    <Section title="الأمان والخصوصية">
+                        <SettingItem icon="key" label="مفاتيح المرور" />
+                        <SettingItem icon="bell" label="الإشعارات" />
+                        <SettingItem icon="globe" label="اللغة" value="العربية" />
+                    </Section>
+
+                    <button className="w-full bg-red-500/10 text-red-500 py-4 rounded-2xl font-black mt-8 flex items-center justify-center gap-2">
+                        <Icon name="log-out" size={20} />
+                        تسجيل الخروج
+                    </button>
+                </div>
+            </motion.div>
+        );
+
+        const Section = ({ title, children }) => (
+            <div className="space-y-2">
+                <h3 className="text-[#FFCC00] text-xs font-black px-2 mb-3 tracking-widest opacity-80 uppercase">{title}</h3>
+                <div className="bg-zinc-900/30 rounded-3xl overflow-hidden border border-white/5">{children}</div>
+            </div>
+        );
+
+        const SettingItem = ({ icon, label, value }) => (
+            <div className="flex items-center justify-between p-4 border-b border-white/5 last:border-0 active:bg-white/5 transition-colors">
+                <div className="flex items-center gap-3">
+                    <Icon name={icon} size={18} className="text-zinc-500" />
+                    <span className="font-bold text-sm text-zinc-300">{label}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    {value && <span className="text-xs font-bold text-zinc-500">{value}</span>}
+                    <Icon name="chevron-left" size={16} className="text-zinc-700" />
+                </div>
+            </div>
+        );
+
+        const Stat = ({ num, label }) => (
+            <div className="flex flex-col items-center">
+                <span className="font-black text-xl text-white">{num}</span>
+                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">{label}</span>
+            </div>
+        );
+
+        const RadarView = () => (
+            <div className="p-6 pt-24 h-full">
+                <h2 className="text-2xl font-black mb-2 flex items-center gap-2">الرادار الاجتماعي <span className="text-[#FFCC00]">⭐</span></h2>
+                <p className="text-zinc-500 text-xs mb-8">اكتشف من حولك في عالم ويكو ستار</p>
+                <div className="grid grid-cols-2 gap-4">
+                    <UserCard name="محمد علي" followers="12M" />
+                    <UserCard name="سارة أحمد" followers="5M" />
+                </div>
+            </div>
+        );
+
+        const UserCard = ({ name, followers }) => (
+            <div className="bg-zinc-900/50 p-5 rounded-[40px] flex flex-col items-center border border-white/5">
+                <div className="w-16 h-16 rounded-full border-2 border-[#FFCC00] mb-3 p-1">
+                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`} className="rounded-full" />
+                </div>
+                <span className="font-black text-sm mb-1">{name}</span>
+                <span className="text-[10px] text-zinc-500 mb-4">{followers} متابع</span>
+                <button className="bg-zinc-800 p-3 rounded-2xl"><Icon name="message-circle" size={18} /></button>
+            </div>
+        );
+
+        const ChatView = () => (
+            <div className="p-6 pt-24 h-full flex flex-col items-center">
+                <h2 className="text-2xl font-black mb-8 self-start">الدردشة</h2>
+                <div className="flex-1 flex flex-col items-center justify-center opacity-40">
+                    <div className="bg-zinc-900 p-8 rounded-full mb-6"><Icon name="message-square" size={60} /></div>
+                    <p className="font-black">لا توجد رسائل بعد</p>
+                    <p className="text-xs mt-2">ابدأ المحادثة مع أصدقائك الآن</p>
+                </div>
+            </div>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
